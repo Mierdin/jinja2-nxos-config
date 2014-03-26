@@ -61,22 +61,23 @@ def getInitiators():
 	return initiators
 
 def getPhysicalInterfaces():
-	pintArray = []
 
-	with open('/home/mierdin/Dropbox/Code/git/jinja2-nxos-config/Templates/n5k/physicalints.csv', 'rb') as csvfile:
-		reader = csv.reader(csvfile,delimiter=';')
+    pintArray = []
 
-		for row in reader:
-			thisPint = PhysicalInterface()
-	        thisPint.slotid = row[0]
-	        thisPint.portid = row[1]
-	        thisPint.description = row[2]
-	        thisPint.switchportMode = row[3]
-	        thisPint.speed = row[4]
-	        thisPint.channelGroup = row[5]
-	        thisPint.accessVlan = row[6]
-	        thisPint.allowedVlans = row[7]
-	        pintArray.append(thisPint)
+    with open('/home/mierdin/Dropbox/Code/git/jinja2-nxos-config/Templates/n5k/physicalints.csv', 'rb') as csvfile:
+        reader = csv.reader(csvfile,delimiter=';')
+
+        for row in reader:
+            thisPint = PhysicalInterface()
+            thisPint.slotid = row[0]
+            thisPint.portid = row[1]
+            thisPint.description = row[2]
+            thisPint.switchportMode = row[3]
+            thisPint.speed = row[4]
+            thisPint.channelGroup = row[5]
+            thisPint.accessVlan = row[6]
+            thisPint.allowedVlans = row[7]
+            pintArray.append(thisPint)
 
 	#print len(reader)
 	print len(pintArray)
