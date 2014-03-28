@@ -1,3 +1,5 @@
+{# TODO: Pretty liberal use of hyphens in this template......need to go back in and clean up unnecessary ones #}
+
 hostname {{ hostname }}
 
 {% for feature in features %}
@@ -41,11 +43,11 @@ vpc domain 101
 port-profile default max-ports 512
 
 device-alias database
-{% for key, value in initDict.iteritems()  %}
-  device-alias name {{ value }} pwwn {{ key }}
+{% for wwpn, name in initDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
 {% endfor %}
-{% for key, value in targetDict.iteritems()  %}
-  device-alias name {{ value }} pwwn {{ key }}
+{%- for wwpn, name in targetDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
 {% endfor %}
 device-alias commit
 
@@ -59,29 +61,30 @@ interface Ethernet{{ int.slotid }}/{{ int.portid }}
   switchport mode {{ int.switchportMode }}
   {% if int.switchportMode == "trunk" -%}
   switchport trunk allowed vlan {{ int.allowedVlans }}
-  {% else %}
+  {%- else %}
   switchport access vlan {{ int.accessVlan }}
-  {% endif %}
-  {% if not int.channelGroup == 0 -%}
+  {%- endif %}
+  {%- if not int.channelGroup == 0 -%}
   channel-group {{ int.channelGroup }} mode active
   {% endif %}
 {% endfor %}
 
 !ZONING CONFIG
-{% for key, value in initDict.iteritems()  %}
-zone name {{ value }} vsan 321
-  member pwwn {{ key }}
-  {% for key2, value2 in targetDict.iteritems()  -%}
-    member pwwn {{ key2 }}
+{# TODO: Need to allow vsan ID to be dynamic as well #}
+{% for wwpn, name in initDict|dictsort %}
+zone name {{ name }}_TO_NETAPP vsan 321
+  member pwwn {{ wwpn }}
+  {% for wwpn, name in targetDict|dictsort  -%}
+    member pwwn {{ wwpn }}
   {% endfor %}
 {% endfor %}
 
-zoneset name ZONESET_VSAN_235 vsan 235
-{% for key, value in initDict.iteritems()  %}
-  member {{ value }}
-{% endfor %}
+zoneset name ZONESET_VSAN_321 vsan 321
+{%- for wwpn, name in initDict|dictsort  %}
+  member {{ name }}
+{%- endfor %}
 
-zoneset activate name ZONESET_VSAN_235 vsan 2
+zoneset activate name ZONESET_VSAN_321 vsan 321
 
 
 
