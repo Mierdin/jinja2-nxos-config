@@ -1,0 +1,13 @@
+{% for port in ports %}
+interface Ethernet{{ port.slotid }}/{{ port.portid }}
+  description {{ port.description }}
+  switchport mode {{ port.switchportMode }}
+  {% if port.switchportMode == "trunk" -%}
+  switchport trunk allowed vlan {{ port.allowedVlans }}
+  {%- else %}
+  switchport access vlan {{ port.accessVlan }}
+  {%- endif %}
+  {%- if not port.channelGroup == 0 -%}
+  channel-group {{ port.channelGroup }} mode active
+  {% endif %}
+{% endfor %}

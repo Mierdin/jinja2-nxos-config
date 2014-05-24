@@ -1,0 +1,17 @@
+hostname {{ hostname }}
+
+snmp-server user admin network-admin auth md5 -- priv -- localizedkey
+snmp-server host 10.1.1.40 traps version 2c public udp-port 2162
+!snmp-server community -- group network-operator
+!snmp-server community -- use-acl acl_for_ro_comm
+ntp server 10.1.1.1 prefer use-vrf management
+ntp server 10.1.1.2 use-vrf management
+ntp source-interface  mgmt0
+vrf context management
+  ip route 0.0.0.0/0 10.1.1.1
+
+spanning-tree domain 101
+spanning-tree vlan 1-610,612-3967,4048-4093 priority 8192
+spanning-tree vlan 611 priority 61440
+
+port-profile default max-ports 512

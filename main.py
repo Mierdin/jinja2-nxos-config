@@ -1,14 +1,9 @@
-#This will build a configuration for a very specific hardware platform right now. Details:
+#!/usr/bin/env python
 
-	#Cisco Nexus 5548UP (48 SFP+ ports)
-	#No Fibre Channel ports configured (intent is all FCoE)
-	#Tested NXOS version TBD
-
-#Requires ucstools located here: https://github.com/mierdin/ucstools
 from ucstools import storage
 
 from jinja2 import Template, Environment, FileSystemLoader
-import csv
+import csv, yaml
 
 #Building these classes to keep things straight in my head - these may go away for simpler alternatives in the future.
 
@@ -24,23 +19,6 @@ class PhysicalInterface:
         self.accessVlan = ''
         self.allowedVlans = ''
 
-def getFeatures():
-	# Some feature enablement/installation varies by syntax, so "features" should be an array of actual NXOS commmands to install or enable a feature 
-	# This may change in the future with some kind of "feature" class....need to think about this
-	featureArray = ['feature fcoe',
-	'install feature-set fabricpath',
-	'feature-set fabricpath',
-	'feature npiv',
-	'feature fport-channel-trunk',
-	'feature tacacs+',
-	'cfs eth distribute',
-	'feature udld',
-	'feature interface-vlan',
-	'feature lacp',
-	'feature vpc',
-	'feature lldp']
-	return featureArray
-
 def getVlans():
 	vlans = {123: 'TEST-VLAN-123', 234: 'TEST-VLAN-234', 345: 'TEST-VLAN-345'}
 	return vlans
@@ -48,10 +26,10 @@ def getVlans():
 def getVsans():
 	vsans = {321: 'TEST-VSAN-321'}
 	return vsans
-	
+
 def getTargets():
 	targets = {}
-	targets['50:00:00:00:00:11:a0:01'] = 'Netapp-01-0a' 
+	targets['50:00:00:00:00:11:a0:01'] = 'Netapp-01-0a'
 	targets['50:00:00:00:00:11:a0:02'] = 'Netapp-01-0b'
 	return targets
 

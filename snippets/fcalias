@@ -1,0 +1,8 @@
+device-alias database
+{% for wwpn, name in initDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
+{% endfor %}
+{%- for wwpn, name in targetDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
+{% endfor %}
+device-alias commit
