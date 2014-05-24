@@ -4,13 +4,11 @@
 	#No Fibre Channel ports configured (intent is all FCoE)
 	#Tested NXOS version TBD
 
-#Requires Cisco UCS Python SDK 0.8 to pull vHBA information
-#Tested with UCS Platform Emulator 2.2(1bPE1)
-from UcsSdk import *
+#Requires ucstools located here: https://github.com/mierdin/ucstools
+from ucstools import storage
 
 from jinja2 import Template, Environment, FileSystemLoader
 import csv
-
 
 #Building these classes to keep things straight in my head - these may go away for simpler alternatives in the future.
 
@@ -63,6 +61,10 @@ def getInitiators():
 	initiators['20:00:00:25:b5:11:a0:01'] = 'ESX-02_ESX-VHBA-A'
 	initiators['20:00:00:25:b5:11:a0:02'] = 'ESX-03_ESX-VHBA-A'
 	initiators['20:00:00:25:b5:11:a0:03'] = 'ESX-04_ESX-VHBA-A'
+
+	handle = UcsHandle()
+	handle.Login('10.12.0.136', username="config", password="config")
+
 	return initiators
 
 def getPhysicalInterfaces():
@@ -88,32 +90,7 @@ def getPhysicalInterfaces():
 	return pintArray
 
 
-def getUcsWWPNs():
-	handle = UcsHandle()
-	handle.Login('10.12.0.136', username="config", password="config")
 
-	vHBADict = {}
-
-	#TODO: Statically defining sub-organization for now, will make more dynamic later
-	obj = handle.GetManagedObject(None, None, {"Dn":"org-root/org-ORG_TEST/"})
-	moArr = handle.GetManagedObject(obj, "vnicFc")
-	for mo in moArr:
-		#Pull only actual vHBAs (not templates) and on the desired fabric (A/B)
-		if str(mo.Addr) != 'derived' and mo.SwitchId == 'A':
-
-			#We're retrieving Dn here so we can include the service profile in the name
-			origDn = str(mo.Dn)
-			
-			#Need to do a little string surgery to transform the Dn of the vHBA into a proper zone name.
-			origDn = origDn.replace('org-root/org-ORG_TEST/','')
-			origDn = origDn.replace('/','_')
-			origDn = origDn.replace('ls-','')
-			origDn = origDn.replace('fc-','')
-
-			#using the WWPN address as key since more likely to be unique
-			vHBADict[mo.Addr] = origDn
-
-	return vHBADict
 
 env = Environment(loader=FileSystemLoader('./Templates/n5k/'))
 template = env.get_template('nexus5548UP')
@@ -122,12 +99,6 @@ print template.render(hostname='N5K-A',
 	features=getFeatures(),
 	vlanDict=getVlans(),
 	vsanDict=getVsans(),
-	initDict=getUcsWWPNs(),
+	initDict=storage.getUcsWWPNs('10.12.0.78','config','config'),
 	targetDict=getTargets(),
 	pints=getPhysicalInterfaces())
-
-
-
-
-
-

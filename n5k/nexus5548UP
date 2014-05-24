@@ -1,0 +1,90 @@
+{# TODO: Pretty liberal use of hyphens in this template......need to go back in and clean up unnecessary ones #}
+
+hostname {{ hostname }}
+
+{% for feature in features %}
+  {{- feature }}
+{% endfor %}
+
+!TODO: QoS
+
+snmp-server user admin network-admin auth md5 -- priv -- localizedkey
+snmp-server host 10.1.1.40 traps version 2c public udp-port 2162
+!snmp-server community -- group network-operator
+!snmp-server community -- use-acl acl_for_ro_comm
+ntp server 10.1.1.1 prefer use-vrf management
+ntp server 10.1.1.2 use-vrf management
+ntp source-interface  mgmt0
+vrf context management
+  ip route 0.0.0.0/0 10.1.1.1
+
+!VLAN Database
+{% for key, value in vlanDict.iteritems() -%}
+vlan {{ key }}
+  name {{ value }}
+{% endfor %}
+
+!VSAN Database
+vsan database
+{% for key, value in vsanDict.iteritems() -%}
+  vsan {{ key }} name {{ value }}
+{% endfor %} 
+
+spanning-tree domain 101
+spanning-tree vlan 1-610,612-3967,4048-4093 priority 8192
+spanning-tree vlan 611 priority 61440
+vpc domain 101
+  role priority 8192
+  system-priority 8192
+  peer-keepalive destination 10.1.1.2 source 10.1.1.1
+  delay restore 180
+  auto-recovery
+  fabricpath switch-id 101
+port-profile default max-ports 512
+
+device-alias database
+{% for wwpn, name in initDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
+{% endfor %}
+{%- for wwpn, name in targetDict|dictsort  -%}
+  device-alias name {{ name }} pwwn {{ wwpn }}
+{% endfor %}
+device-alias commit
+
+!TODO: vints
+
+!TODO: pints
+
+{% for int in pints %}
+interface Ethernet{{ int.slotid }}/{{ int.portid }}
+  description {{ int.description }}
+  switchport mode {{ int.switchportMode }}
+  {% if int.switchportMode == "trunk" -%}
+  switchport trunk allowed vlan {{ int.allowedVlans }}
+  {%- else %}
+  switchport access vlan {{ int.accessVlan }}
+  {%- endif %}
+  {%- if not int.channelGroup == 0 -%}
+  channel-group {{ int.channelGroup }} mode active
+  {% endif %}
+{% endfor %}
+
+!ZONING CONFIG
+{# TODO: Need to allow vsan ID to be dynamic as well #}
+{% for wwpn, name in initDict|dictsort %}
+zone name {{ name }}_TO_NETAPP vsan 321
+  member pwwn {{ wwpn }}
+  {% for wwpn, name in targetDict|dictsort  -%}
+    member pwwn {{ wwpn }}
+  {% endfor %}
+{% endfor %}
+
+zoneset name ZONESET_VSAN_321 vsan 321
+{%- for wwpn, name in initDict|dictsort  %}
+  member {{ name }}
+{%- endfor %}
+
+zoneset activate name ZONESET_VSAN_321 vsan 321
+
+
+
