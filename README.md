@@ -14,6 +14,9 @@ I have them split out as granularly as possible - I didn't want to have snippets
 
 This will build a configuration for a very specific hardware platform right now. Details:
 
-Tested NXOS version and switch model TBD
+Tested NXOS version and switch model TBD. However, some assumptions during this initial build:
+-Nexus 5K with FC/FCoE services (this shows in many various snippets)
+-vPC using the mgmt0 interfaces for keepalive
+Future versions will allow this to be more configurable
 
 Requires [ucstools](https://github.com/mierdin/ucstools) (if you want to pull data from UCS to define config)

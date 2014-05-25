@@ -1,5 +1,5 @@
 !VLAN Database
-{% for key, value in vlanDict.iteritems() -%}
-vlan {{ key }}
-  name {{ value }}
+{% for id, name in vlans.iteritems() -%}
+vlan {{ id }}
+  name {{ name }}
 {% endfor %}
