@@ -19,15 +19,15 @@ def gen_snippet(snippet, config):
     template = env.get_template(snippet)
     #See if you can simplify the below even more
     if snippet == 'features':
-        return template.render(features=configDict['features'])
+        return template.render(features=config)
     elif snippet == 'vlans':
-        return template.render(vlans=configDict['vlans'])
-
-def getTargets():
-    targets = {}
-    targets['50:00:00:00:00:11:a0:01'] = 'Netapp-01-0a'
-    targets['50:00:00:00:00:11:a0:02'] = 'Netapp-01-0b'
-    return targets
+        return template.render(vlans=config)
+    elif snippet == 'fcalias':
+        return template.render(initDict=config['initiators'], targetDict=config['targets'])
+    elif snippet == 'qos':
+        return template.render(qos=config)
+    elif snippet == 'ports':
+        return template.render(ports=config)
 
 def getucswwpns(module):
     #Need UCS Python SDK for this
@@ -70,35 +70,35 @@ def getucswwpns(module):
             #Pull only actual vHBAs (not templates) and on the desired fabric (A/B)
             if str(mo.Addr) != 'derived' and mo.SwitchId == 'A':
 
-            #We're retrieving Dn here so we can include the service profile in the name
-            origDn = str(mo.Dn)
+                #We're retrieving Dn here so we can include the service profile in the name
+                origDn = str(mo.Dn)
 
-            #Need to do a little string surgery to transform the Dn of the vHBA into a proper zone name.
-            origDn = origDn.replace('org-root/' + ucsOrg + '/','')
-            origDn = origDn.replace('/','_')
-            origDn = origDn.replace('ls-','')
-            origDn = origDn.replace('fc-','')
+                #Need to do a little string surgery to transform the Dn of the vHBA into a proper zone name.
+                origDn = origDn.replace('org-root/' + ucsOrg + '/','')
+                origDn = origDn.replace('/','_')
+                origDn = origDn.replace('ls-','')
+                origDn = origDn.replace('fc-','')
 
-            logging.info('Retrived ' + origDn + ' with address ' + mo.Addr)
+                logging.info('Retrived ' + origDn + ' with address ' + mo.Addr)
 
-            #using the WWPN address as key since more likely to be unique
-            FabADict[mo.Addr] = origDn
+                #using the WWPN address as key since more likely to be unique
+                FabADict[mo.Addr] = origDn
 
-          elif str(mo.Addr) != 'derived' and mo.SwitchId == 'B':
+            elif str(mo.Addr) != 'derived' and mo.SwitchId == 'B':
 
-            #We're retrieving Dn here so we can include the service profile in the name
-            origDn = str(mo.Dn)
+                #We're retrieving Dn here so we can include the service profile in the name
+                origDn = str(mo.Dn)
 
-            #Need to do a little string surgery to transform the Dn of the vHBA into a proper zone name.
-            origDn = origDn.replace('org-root/' + ucsOrg + '/','')
-            origDn = origDn.replace('/','_')
-            origDn = origDn.replace('ls-','')
-            origDn = origDn.replace('fc-','')
+                #Need to do a little string surgery to transform the Dn of the vHBA into a proper zone name.
+                origDn = origDn.replace('org-root/' + ucsOrg + '/','')
+                origDn = origDn.replace('/','_')
+                origDn = origDn.replace('ls-','')
+                origDn = origDn.replace('fc-','')
 
-            logging.info('Retrived ' + origDn + ' with address ' + mo.Addr)
+                logging.info('Retrived ' + origDn + ' with address ' + mo.Addr)
 
-            #using the WWPN address as key since more likely to be unique
-            FabBDict[mo.Addr] = origDn
+                #using the WWPN address as key since more likely to be unique
+                FabBDict[mo.Addr] = origDn
 
         #Populate primary dictionary
         vHBADict['a'] = FabADict
