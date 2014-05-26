@@ -1,13 +1,23 @@
 #!/usr/bin/env python
+""" jinja2-nxos-config
+
+    Accepts arguments from YAML config file
+    and generates a Jinja2 configuration
+"""
 
 import sys, methods
 
-if __name__ == "__main__":
-	try:
-		yamlfile = sys.argv[1]
-	except IndexError:
-		pass #TODO: add error message
-	configDict = methods.get_config(yamlfile)
+def run():
+    """Function docstring"""
+    try:
+        yamlfile = sys.argv[1]
+    except IndexError:
+        print "Please refer to documentation for proper arguments"
+    configdict = methods.get_config(yamlfile)
 
-	for snippet in configDict['5ksnippets']:
-		print methods.gen_snippet(snippet, configDict[snippet])
+    for snippet in configdict['5ksnippets']:
+        print methods.gen_snippet(snippet, configdict[snippet])
+
+
+if __name__ == "__main__":
+    run()
