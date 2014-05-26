@@ -1,5 +1,5 @@
 !VSAN Database
 vsan database
-{% for key, value in vsanDict.iteritems() -%}
+{% for key, value in config.iteritems() -%}
   vsan {{ key }} name {{ value }}
 {% endfor %}

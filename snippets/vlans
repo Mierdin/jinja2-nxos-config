@@ -1,5 +1,5 @@
 !VLAN Database
-{% for id, name in vlans.iteritems() -%}
+{% for id, name in config|dictsort -%}
 vlan {{ id }}
     name {{ name }}
     {# fabricpath #}

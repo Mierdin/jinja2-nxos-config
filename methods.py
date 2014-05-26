@@ -17,20 +17,7 @@ def get_config(file):
 def gen_snippet(snippet, config):
     '''Renders a config snippet. "config" represents the portion of the YAML file applicable to this snippet.'''
     template = env.get_template(snippet)
-    #See if you can simplify the below even more - may just accept a standard "config" dictionary in each Jinja template so you can refer to it the same way each time
-    #See "misc" snippet
-    if snippet == 'features':
-        return template.render(features=config)
-    elif snippet == 'vlans':
-        return template.render(vlans=config)
-    elif snippet == 'fcalias':
-        return template.render(initDict=config['initiators'], targetDict=config['targets'])
-    elif snippet == 'qos':
-        return template.render(qos=config)
-    elif snippet == 'ports':
-        return template.render(ports=config)
-    elif snippet == 'misc':
-        return template.render(config=config)
+    return template.render(config=config)
 
 def getucswwpns(module):
     #Need UCS Python SDK for this
