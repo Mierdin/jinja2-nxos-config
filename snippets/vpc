@@ -4,4 +4,4 @@ vpc domain 101
   peer-keepalive destination 10.1.1.2 source 10.1.1.1
   delay restore 180
   auto-recovery
-  fabricpath switch-id 101
+  {# fabricpath switch-id 101 #}

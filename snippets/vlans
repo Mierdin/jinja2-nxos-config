@@ -2,4 +2,5 @@
 {% for id, name in vlans.iteritems() -%}
 vlan {{ id }}
     name {{ name }}
+    {# fabricpath #}
 {% endfor %}
