@@ -5,8 +5,10 @@ snmp-server host {{ config['snmp']['traphost'] }} traps version 2c public udp-po
 {# snmp-server community -- group network-operator #}
 {# snmp-server community -- use-acl acl_for_ro_comm #}
 
-ntp server {{ config['ntp1'] }} prefer use-vrf management
-ntp server {{ config['ntp2'] }} use-vrf management
+{$ for ntpserver in config['ntp'] $}
+    ntp server {{ ntpserver }} use-vrf management
+{% endfor %}
+{# TODO: Need to find a way to insert "prefer" keyword #}
 ntp source-interface mgmt0
 
 vrf context management

@@ -83,8 +83,9 @@ ports:
 misc:
     hostname: "N5K-A"
     mgmtgw: 10.1.1.1
-    ntp1: 192.168.11.10 #fix, make a list
-    ntp2: 192.168.11.11
+    ntp: 
+        - 192.168.11.10
+        - 192.168.11.11
     snmp:
         traphost: 10.102.2.100
 
