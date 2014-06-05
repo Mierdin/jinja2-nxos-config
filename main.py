@@ -14,10 +14,12 @@ def run():
     except IndexError:
         print "Please refer to documentation for proper arguments"
     configdict = methods.get_config(yamlfile)
-
-    for snippet in configdict['5ksnippets']:
+    
+    #Generate configurations for the core snippets
+    for snippet in configdict['coresnippets']:
         print methods.gen_snippet(snippet, configdict[snippet])
 
+    #TODO: consider doing some kind of check for core stuff before features
 
 if __name__ == "__main__":
     run()

@@ -1,0 +1,152 @@
+# NXOS Jinja2 Template Configuration File
+#
+# Author: Matt Oswalt (http://keepingitclassless.net)
+#
+# This configuration file houses all of the dymanically populated information
+# that makes it's way into an NXOS configuration script through Jinja2
+# templates.
+#
+# Refer to the README for more details on how to use this tool.
+
+# CORESNIPPETS
+#
+# These are the core snippets needed to build a basic, 
+# switch-agnostic configuration.
+coresnippets:
+    - features
+    - vlans
+    - vsans
+    - fcalias
+    - qos
+    - ports
+    - misc
+    #- vpc
+    #- fczoning
+
+# FEATURES
+#
+# Enables features on the switch
+# Currently using actual NXOS feature syntax, this may change in future
+features:
+    - feature fcoe
+    - install feature-set fabricpath
+    - feature-set fabricpath
+    - feature npiv
+    - feature fport-channel-trunk
+    - feature tacacs+
+    - cfs eth distribute
+    - feature udld
+    - feature interface-vlan
+    - feature lacp
+    - feature vpc
+    - feature lldp
+
+
+# VLANS
+#
+# Defines the VLANs and their corresponding names/descriptions that should be
+# placed on the switch.
+#
+# Format is a key/value pair, where VLAN ID is the key, and name/description is
+# the corresponding value.
+#
+# TODO: mode fabricpath? FCoE VLAN ID _____?
+vlans:
+    109: Core_Services_10.1.9.0/24
+    232: 1000v-Control_10.1.32.0/23
+    234: CIFS_10.1.34.0/24
+    235: FCoE-Fabric-A
+    240: ESX_MGMT_10.1.40.0/24
+    241: vMotion_10.1.41.0/24
+    249: Corporate-VMs_10.1.49.0/24
+    260: NFS_10.1.160.0/20
+
+# VSANS
+#
+# Defines the VSANs and their corresponding names/descriptions that should be
+# placed on the switch.
+#
+# Format is a key/value pair, where VSAN ID is the key, and name/description is
+# the corresponding value.
+vsans:
+    235: VSAN_A
+
+# FCALIAS
+#
+# Matches initiator/target names with WWPNs for enhanced readability.
+#
+# #TODO: This section will likely be deprecated and 
+# placed into FC feature installation
+#
+fcalias:
+    initiators:
+        ESXi-01_ESX-VHBA-A: "20:00:00:25:b5:11:a0:01"
+        ESXi-02_ESX-VHBA-A: "20:00:00:25:b5:11:a0:02"
+        ESXi-03_ESX-VHBA-A: "20:00:00:25:b5:11:a0:03"
+        ESXi-04_ESX-VHBA-A: "20:00:00:25:b5:11:a0:04"
+        ESXi-04_ESX-VHBA-A: "20:00:00:25:b5:11:a0:04"
+    targets:
+        Netapp_e0a: "50:00:00:25:b5:11:12:34"
+        Netapp_e0b: "50:00:00:25:b5:11:56:78"
+
+# QOS
+#
+# Specifies some parameters to be used in a standard MQC-style configuration
+qos:
+    defaultmtu: 1500 # The MTU to be used on class-default 
+                     # (unclassified) traffic
+
+# PORTS
+#
+# Specifies general configuration settings for individual ports. Many ports 
+# receive more specific configuration as part of the "feature installation"
+# option in future versions, but this is a handy way to make en masse changes
+# first.
+ports:
+    trunks:
+        "e1/1-48" 
+        #TODO: need to make this not a simple string - probably a list
+
+# MISC
+#
+# This section contains various portions of the configuration that don't 
+# deserve their own section. Because they're stupid, that's why.
+misc:
+    hostname: "N5K-A"
+    mgmtgw: 10.1.1.1
+    ntp1: 192.168.11.10 #fix, make a list
+    ntp2: 192.168.11.11
+    snmp:
+        traphost: 10.102.2.100
+
+#################################
+#SANDBOX
+#################################
+#
+# Nothing below has been implemented thus far. I will place configuration stuff
+# here in order to get things working initially, but it's likely that it will 
+# be moved into a separate file soon.
+      
+# SIMPLEVARS
+# (Not yet implemented)
+#
+# These vars may be used in the future to define things like switch model,
+# fabric side (A/B), NXOS version, etc.
+simplevars:    
+    switch: a
+    model: 0 #Useful for determining if FC stuff is needed
+    nxos: 0
+
+
+vpc_config:
+    peerlink:
+        -e1/1
+        -e1/2
+    keepalive:
+        vrf: management
+
+pull_fc_from_ucs:
+    enabled: no
+    addr: 10.1.1.1
+    user: admin
+    pass: config
