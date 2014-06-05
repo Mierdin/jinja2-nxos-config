@@ -60,35 +60,6 @@ vlans:
     241: vMotion_10.1.41.0/24
     249: Corporate-VMs_10.1.49.0/24
     260: NFS_10.1.160.0/20
-
-# VSANS
-#
-# Defines the VSANs and their corresponding names/descriptions that should be
-# placed on the switch.
-#
-# Format is a key/value pair, where VSAN ID is the key, and name/description is
-# the corresponding value.
-vsans:
-    235: VSAN_A
-
-# FCALIAS
-#
-# Matches initiator/target names with WWPNs for enhanced readability.
-#
-# #TODO: This section will likely be deprecated and 
-# placed into FC feature installation
-#
-fcalias:
-    initiators:
-        ESXi-01_ESX-VHBA-A: "20:00:00:25:b5:11:a0:01"
-        ESXi-02_ESX-VHBA-A: "20:00:00:25:b5:11:a0:02"
-        ESXi-03_ESX-VHBA-A: "20:00:00:25:b5:11:a0:03"
-        ESXi-04_ESX-VHBA-A: "20:00:00:25:b5:11:a0:04"
-        ESXi-04_ESX-VHBA-A: "20:00:00:25:b5:11:a0:04"
-    targets:
-        Netapp_e0a: "50:00:00:25:b5:11:12:34"
-        Netapp_e0b: "50:00:00:25:b5:11:56:78"
-
 # QOS
 #
 # Specifies some parameters to be used in a standard MQC-style configuration
@@ -119,34 +90,4 @@ misc:
     snmp:
         traphost: 10.102.2.100
 
-#################################
-#SANDBOX
-#################################
-#
-# Nothing below has been implemented thus far. I will place configuration stuff
-# here in order to get things working initially, but it's likely that it will 
-# be moved into a separate file soon.
-      
-# SIMPLEVARS
-# (Not yet implemented)
-#
-# These vars may be used in the future to define things like switch model,
-# fabric side (A/B), NXOS version, etc.
-simplevars:    
-    switch: a
-    model: 0 #Useful for determining if FC stuff is needed
-    nxos: 0
 
-
-vpc_config:
-    peerlink:
-        -e1/1
-        -e1/2
-    keepalive:
-        vrf: management
-
-pull_fc_from_ucs:
-    enabled: no
-    addr: 10.1.1.1
-    user: admin
-    pass: config
