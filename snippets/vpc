@@ -1,7 +1,0 @@
-vpc domain 101
-  role priority 8192
-  system-priority 8192
-  peer-keepalive destination 10.1.1.2 source 10.1.1.1
-  delay restore 180
-  auto-recovery
-  {# fabricpath switch-id 101 #}

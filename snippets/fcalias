@@ -1,8 +1,0 @@
-device-alias database
-{% for wwpn, name in config['initiators']|dictsort  -%}
-  device-alias name {{ name }} pwwn {{ wwpn }}
-{% endfor %}
-{%- for wwpn, name in config['targets']|dictsort  -%}
-  device-alias name {{ name }} pwwn {{ wwpn }}
-{% endfor %}
-device-alias commit
