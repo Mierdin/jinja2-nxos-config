@@ -15,8 +15,6 @@
 coresnippets:
     - features
     - vlans
-    - vsans
-    - fcalias
     - qos
     - ports
     - misc

@@ -1,0 +1,18 @@
+hostname {{ config['hostname'] }}
+
+{# snmp-server user admin network-admin auth md5 -- priv -- localizedkey #}
+snmp-server host {{ config['snmp']['traphost'] }} traps version 2c public udp-port 2162
+{# snmp-server community -- group network-operator #}
+{# snmp-server community -- use-acl acl_for_ro_comm #}
+
+{% for ntpserver in config['ntp'] -%}
+    ntp server {{ ntpserver }} use-vrf management
+{% endfor %}
+{# TODO: Need to find a way to insert "prefer" keyword #}
+ntp source-interface mgmt0
+
+vrf context management
+  ip route 0.0.0.0/0 {{ config['mgmtgw']}}
+
+spanning-tree domain 101
+spanning-tree vlan 1-4093 priority 4096

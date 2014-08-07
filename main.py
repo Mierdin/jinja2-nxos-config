@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#/usr/bin/env python
 """ jinja2-nxos-config
 
     Accepts arguments from YAML config file

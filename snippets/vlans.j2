@@ -1,0 +1,6 @@
+!VLAN Database
+{% for id, name in config|dictsort -%}
+vlan {{ id }}
+    name {{ name }}
+    {# fabricpath #}
+{% endfor %}

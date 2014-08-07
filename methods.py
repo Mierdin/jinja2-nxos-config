@@ -22,5 +22,5 @@ def gen_snippet(snippet, config):
     "config" represents the portion of the YAML
     file applicable to this snippet"""
 
-    template = ENV.get_template(snippet)
+    template = ENV.get_template(snippet + ".j2")
     return template.render(config=config)
